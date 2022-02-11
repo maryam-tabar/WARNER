@@ -1,4 +1,4 @@
-# This code is adopted from https://github.com/raghakot/keras-resnet
+# The code is adapted from https://github.com/raghakot/keras-resnet
 
 from __future__ import division
 import six
