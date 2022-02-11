@@ -190,7 +190,6 @@ def basic_block(filters, init_strides=(1, 1), is_first_block_of_first_layer=Fals
         mask = inputs[1]
         
         if is_first_block_of_first_layer:
-            # don't repeat bn->relu since we just did bn->relu->maxpool
             conv_2d1 = PConv2D(filters=filters, kernel_size=(3, 3),
                            strides=init_strides,
                            padding="same",
@@ -239,11 +238,9 @@ class WARNER(object):
         if len(input_shape) != 3:
             raise Exception("Input shape should be a tuple (nb_channels, nb_rows, nb_cols)")
 
-        # Permute dimension order if necessary
         if K.image_data_format() == 'tf':
             input_shape = (input_shape[1], input_shape[2], input_shape[0])
 
-        # Load function from str if needed.
         block_fn = _get_block(block_fn)
 
         input_county17 = Input(shape=input_county_shape) # satellite imagery of counties in 2017
@@ -272,10 +269,8 @@ class WARNER(object):
             block, mask_block = _residual_block(block_fn, filters=filters, repetitions=r, is_first_layer=(i == 0))([block, mask_block])
             filters *= 2
             
-        # Last activation
         block = _bn_relu(block)
 
-        # Classifier block
         final_block = Multiply()([block, mask_block])
         block_shape = K.int_shape(final_block)
         pool2 = AveragePooling2D(pool_size=(block_shape[ROW_AXIS], block_shape[COL_AXIS]),
